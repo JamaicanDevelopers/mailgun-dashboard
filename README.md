@@ -10,4 +10,8 @@ go build
 MAILGUN_DOMAIN=<domain> MAILGUN_APIKEY=<api key> ./mailgun-dashboard
 ```
 
+## Screenshots
+
+![dashboard](http://i.imgur.com/asa9bCI.png)
+
 Go to http://localhost:4000 to play around
