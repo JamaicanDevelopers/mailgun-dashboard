@@ -48,13 +48,15 @@
         <div class="event {{$event.event}}">
           <span>{{$event.timestamp|ts_format}}</span>
           <span class="recipient"><a href="/?query={{$event.recipient}}" title="{{$event.recipient}}">{{$event.recipient}}</a></span>
+          <span class="label label-default">{{$event.event|title}}</span>
           <span>{{$event.message.headers.subject}}</span>
           {{if eq $event.event "failed"}}
           <br><span>{{index $event "delivery-status" "message"}}</span>
           {{end}}
           <span class="pull-right">
-            <a class="show-body btn btn-info btn-xs" data-subject="{{$event.message.headers.subject}}" href="/view?key={{$event.storage.key}}">View</a>
+            <a class="show-body btn btn-info btn-xs" data-name="{{index $event.message.headers "message-id"}}" href="/view?key={{$event.storage.key}}">View</a>
             <a class="resend-message btn btn-success btn-xs" data-to="{{$event.recipient}}" data-key="{{$event.storage.key}}" href="/resend">Resend</a>
+            <a class="btn btn-default btn-xs" href="/?id={{index $event.message.headers "message-id"}}">History</a>
           </span>
         </div>
         {{end}}

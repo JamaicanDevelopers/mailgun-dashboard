@@ -28,6 +28,7 @@ func init() {
 		"ts_format": func(timestamp float64) string {
 			return time.Unix(int64(timestamp), 0).Format(time.RFC822Z)
 		},
+		"title": strings.Title,
 	}
 
 	mg = mailgun.NewMailgun(os.Getenv("MAILGUN_DOMAIN"), os.Getenv("MAILGUN_APIKEY"), "")
@@ -36,16 +37,21 @@ func init() {
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query().Get("query")
 	eventType := r.URL.Query().Get("type")
+	id := r.URL.Query().Get("id")
 	filters := make(map[string]string)
 
-	if eventType != "" {
-		filters["event"] = eventType
+	if id != "" {
+		filters["message-id"] = id
 	} else {
-		filters["event"] = "delivered OR rejected OR failed OR complained"
-	}
+		if eventType != "" {
+			filters["event"] = eventType
+		} else {
+			filters["event"] = "delivered OR rejected OR failed OR complained"
+		}
 
-	if query != "" {
-		filters["recipient"] = query
+		if query != "" {
+			filters["recipient"] = query
+		}
 	}
 
 	events := mg.NewEventIterator()

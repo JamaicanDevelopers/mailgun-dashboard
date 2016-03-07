@@ -2,7 +2,7 @@ var windowOptions = 'menubar=no,toolbar=no,location=no,directories=no,status=no,
 
 $('.show-body').on('click', function(event) {
     event.preventDefault();
-    window.open($(this).attr('href'), $(this).data('subject'), windowOptions);
+    window.open($(this).attr('href'), $(this).data('name'), windowOptions);
 });
 
 $('.resend-message').on('click', function(event) {
