@@ -30,29 +30,34 @@
             <div class="pull-right col-md-4">
               <input type="text" class="form-control" placeholder="Search logs" name="query" value={{.Query}}>
             </div>
+            <div class="pull-right col-md-3">
+              <select name="type" class="form-control">
+                <option value="">All</option>
+                <option value="delivered" {{if eq .EventType "delivered"}}selected{{end}}>Delivered</option>
+                <option value="rejected" {{if eq .EventType "rejected"}}selected{{end}}>Rejected</option>
+                <option value="failed" {{if eq .EventType "failed"}}selected{{end}}>Failed</option>
+                <option value="complained" {{if eq .EventType "complained"}}selected{{end}}>Complained</option>
+              </select>
+            </div>
             <button type="submit" class="btn btn-default">Refresh</button>
           </form>
         </div>
       </div>
       <div class="panel panel-default">
-        <table class="table table-hover">
-          <thead>
-            <tr>
-              <th>Date/Time</th><th>Recipient</th><th>Subject</th><th colspan="2">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {{range .Events}}
-            <tr>
-              <td>{{.timestamp|ts_format}}</td>
-              <td>{{.recipient}}</td>
-              <td>{{.message.headers.subject}}</td>
-              <td><a class="show-body btn btn-info btn-xs" data-subject="{{.message.headers.subject}}" href="/view?key={{.storage.key}}">View</a></td>
-              <td><a class="resend-message btn btn-success btn-xs" data-key="{{.storage.key}}" href="/resend">Resend</a></td>
-            </tr>
-            {{ end }}
-          </tbody>
-        </table>
+        {{range $event := .Events}}
+        <div class="event {{$event.event}}">
+          <span>{{$event.timestamp|ts_format}}</span>
+          <span class="recipient"><a href="/?query={{$event.recipient}}" title="{{$event.recipient}}">{{$event.recipient}}</a></span>
+          <span>{{$event.message.headers.subject}}</span>
+          {{if eq $event.event "failed"}}
+          <br><span>{{index $event "delivery-status" "message"}}</span>
+          {{end}}
+          <span class="pull-right">
+            <a class="show-body btn btn-info btn-xs" data-subject="{{$event.message.headers.subject}}" href="/view?key={{$event.storage.key}}">View</a>
+            <a class="resend-message btn btn-success btn-xs" data-to="{{$event.recipient}}" data-key="{{$event.storage.key}}" href="/resend">Resend</a>
+          </span>
+        </div>
+        {{end}}
       </div>
     </div>
 
