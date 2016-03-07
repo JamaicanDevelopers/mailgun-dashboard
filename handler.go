@@ -1,11 +1,13 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"html/template"
 	"io/ioutil"
 	"net/http"
 	"os"
+	"regexp"
 	"strings"
 	"time"
 
@@ -29,6 +31,16 @@ func init() {
 			return time.Unix(int64(timestamp), 0).Format(time.RFC822Z)
 		},
 		"title": strings.Title,
+		"sanitize": func(messageId string) string {
+			re := regexp.MustCompile("[@.]")
+
+			return re.ReplaceAllLiteralString(messageId, "-")
+		},
+		"to_nice_json": func(event mailgun.Event) string {
+			indented, _ := json.MarshalIndent(event, "", "    ")
+
+			return string(indented)
+		},
 	}
 
 	mg = mailgun.NewMailgun(os.Getenv("MAILGUN_DOMAIN"), os.Getenv("MAILGUN_APIKEY"), "")

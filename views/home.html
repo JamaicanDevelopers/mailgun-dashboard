@@ -57,7 +57,11 @@
             <a class="show-body btn btn-info btn-xs" data-name="{{index $event.message.headers "message-id"}}" href="/view?key={{$event.storage.key}}">View</a>
             <a class="resend-message btn btn-success btn-xs" data-to="{{$event.recipient}}" data-key="{{$event.storage.key}}" href="/resend">Resend</a>
             <a class="btn btn-default btn-xs" href="/?id={{index $event.message.headers "message-id"}}">History</a>
+            <a class="btn btn-warning btn-xs" data-toggle="collapse" href="#{{index $event.message.headers "message-id"|sanitize}}">Raw</a>
           </span>
+          <div class="collapse" id="{{index $event.message.headers "message-id"|sanitize}}">
+            <pre>{{$event|to_nice_json}}</pre>
+          </div>
         </div>
         {{end}}
       </div>
