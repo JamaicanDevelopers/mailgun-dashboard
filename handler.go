@@ -18,8 +18,9 @@ var (
 )
 
 type Logs struct {
-	Query  string
-	Events []mailgun.Event
+	Query     string
+	EventType string
+	Events    []mailgun.Event
 }
 
 func init() {
@@ -34,8 +35,14 @@ func init() {
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query().Get("query")
+	eventType := r.URL.Query().Get("type")
 	filters := make(map[string]string)
-	filters["event"] = "accepted"
+
+	if eventType != "" {
+		filters["event"] = eventType
+	} else {
+		filters["event"] = "delivered OR rejected OR failed OR complained"
+	}
 
 	if query != "" {
 		filters["recipient"] = query
@@ -47,7 +54,7 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	events.GetFirstPage(options)
-	logs := Logs{Query: query, Events: events.Events()}
+	logs := Logs{Query: query, EventType: eventType, Events: events.Events()}
 
 	renderTemplate(w, "home.html", logs)
 }
@@ -62,8 +69,9 @@ func ViewHandler(w http.ResponseWriter, r *http.Request) {
 func ResendHandler(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	key := r.Form.Get("key")
+	to := r.Form.Get("to")
 	stored, _ := mg.GetStoredMessageRaw(key)
-	message := mg.NewMIMEMessage(ioutil.NopCloser(strings.NewReader(stored.BodyMime)), stored.Recipients)
+	message := mg.NewMIMEMessage(ioutil.NopCloser(strings.NewReader(stored.BodyMime)), to)
 	_, id, err := mg.Send(message)
 
 	if err != nil {

@@ -7,7 +7,13 @@ $('.show-body').on('click', function(event) {
 
 $('.resend-message').on('click', function(event) {
     event.preventDefault();
-    $.post($(this).attr('href'), {key: $(this).data('key')}, function(data) {
-        window.alert(data);
-    })
+    var to = window.prompt("Resend this message to?", $(this).data('to'));
+
+    if (null == to) {
+        return;
+    }
+
+    $.post($(this).attr('href'), {key: $(this).data('key'), to: to}, function(data) {
+        window.alert("Message resent.");
+    });
 })
