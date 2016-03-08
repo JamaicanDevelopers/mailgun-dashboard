@@ -48,3 +48,14 @@ body {
     top: 5px;
     right: 5px;
 }
+
+#html-body {
+  all: initial;
+  * {
+    all: unset;
+  }
+}
+
+#text-body {
+    font-family: monospace;
+}

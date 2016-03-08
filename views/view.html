@@ -1,2 +1,17 @@
-<!DOCTYPE html>
-{{.}}
+{{define "body"}}
+<div>
+
+  <!-- Nav tabs -->
+  <ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active"><a href="#html" aria-controls="html" role="tab" data-toggle="tab">Html</a></li>
+    <li role="presentation"><a href="#text" aria-controls="text" role="tab" data-toggle="tab">Text</a></li>
+  </ul>
+
+  <!-- Tab panes -->
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="html"><div id="html-body">{{.Html}}</div></div>
+    <div role="tabpanel" class="tab-pane" id="text"><div id="text-body">{{.Text}}</div></div>
+  </div>
+
+</div>
+{{end}}
