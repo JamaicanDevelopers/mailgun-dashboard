@@ -50,10 +50,7 @@ body {
 }
 
 #html-body {
-  all: initial;
-  * {
-    all: unset;
-  }
+    all: initial;
 }
 
 #text-body {
