@@ -17,6 +17,7 @@ body {
     border-left: 5px solid #ccc;
     padding: 5px;
     border-bottom: 1px solid #ccc;
+    position: relative;
 }
 
 .event:last-child {
@@ -40,4 +41,10 @@ body {
 
 .hidden {
     display: none;
+}
+
+.event > .actions {
+    position: absolute;
+    top: 5px;
+    right: 5px;
 }
