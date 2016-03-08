@@ -21,7 +21,7 @@
   </div>
   <div class="panel panel-default">
     {{range $index, $event := .Events}}
-    <div class="event {{$event.event}}">
+    <div class="event {{index $event "log-level"}}">
       <span>{{$event.timestamp|ts_format}}</span>
       <span class="recipient"><a href="/?query={{$event.recipient}}" title="{{$event.recipient}}">{{$event.recipient}}</a></span>
       <span class="label label-default">{{$event.event|title}}</span>

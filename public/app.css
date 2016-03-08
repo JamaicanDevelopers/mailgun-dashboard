@@ -28,15 +28,16 @@ body {
     background-color: #f5f5f5;
 }
 
-.event.delivered,
-.event.opened,
-.event.accepted {
+.event.info {
     border-left: 5px solid #5cb85c;
 }
 
-.event.failed,
-.event.complained {
+.event.error {
     border-left: 5px solid #c9302c;
+}
+
+.event.warn {
+    border-left: 5px solid #f0ad4e;
 }
 
 .hidden {
