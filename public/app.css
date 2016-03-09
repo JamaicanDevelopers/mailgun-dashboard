@@ -55,5 +55,7 @@ body {
 }
 
 #text-body {
+    all: initial;
     font-family: monospace;
+    white-space: pre;
 }
