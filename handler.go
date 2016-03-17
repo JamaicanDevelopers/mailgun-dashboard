@@ -11,18 +11,22 @@ import (
 	"strings"
 	"time"
 
+	"github.com/julienschmidt/httprouter"
 	"github.com/mailgun/mailgun-go"
 )
 
 var (
-	mg   mailgun.Mailgun
-	tmpl map[string]*template.Template
+	tmpl       map[string]*template.Template
+	baseDomain string
+	apiKey     string
 )
 
 type Logs struct {
-	Query     string
-	EventType string
-	Events    []mailgun.Event
+	Query          string
+	EventType      string
+	Events         []mailgun.Event
+	Domains        []mailgun.Domain
+	SelectedDomain string
 }
 
 type View struct {
@@ -51,15 +55,29 @@ func init() {
 	tmpl = make(map[string]*template.Template)
 	tmpl["home"] = template.Must(template.New("home").Funcs(funcMap).ParseFiles("views/home.html", "views/base.html"))
 	tmpl["view"] = template.Must(template.New("view").Funcs(funcMap).ParseFiles("views/view.html", "views/base.html"))
+	tmpl["html"] = template.Must(template.New("html").ParseFiles("views/html.html"))
+	tmpl["plain"] = template.Must(template.New("plain").ParseFiles("views/plain.html"))
 
-	mg = mailgun.NewMailgun(os.Getenv("MAILGUN_DOMAIN"), os.Getenv("MAILGUN_APIKEY"), "")
+	baseDomain = os.Getenv("MAILGUN_DOMAIN")
+	apiKey = os.Getenv("MAILGUN_APIKEY")
 }
 
-func HomeHandler(w http.ResponseWriter, r *http.Request) {
+func HomeHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	query := r.URL.Query().Get("query")
 	eventType := r.URL.Query().Get("type")
 	id := r.URL.Query().Get("id")
+	selectedDomain := r.URL.Query().Get("domain")
 	filters := make(map[string]string)
+	var mg mailgun.Mailgun
+
+	if selectedDomain != "" {
+		mg = mailgun.NewMailgun(selectedDomain, apiKey, "")
+	} else {
+		mg = mailgun.NewMailgun(baseDomain, apiKey, "")
+		selectedDomain = baseDomain
+	}
+
+	_, domains, _ := mg.GetDomains(-1, -1)
 
 	if id != "" {
 		filters["message-id"] = id
@@ -81,20 +99,40 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	events.GetFirstPage(options)
-	logs := Logs{Query: query, EventType: eventType, Events: events.Events()}
+	logs := Logs{Query: query, EventType: eventType, Events: events.Events(), Domains: domains, SelectedDomain: selectedDomain}
 
 	renderTemplate(w, "home", logs)
 }
 
-func ViewHandler(w http.ResponseWriter, r *http.Request) {
-	key := r.URL.Query().Get("key")
-	message, _ := mg.GetStoredMessage(key)
-	view := View{Html: template.HTML(message.BodyHtml), Text: message.BodyPlain}
+func ViewHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	data := make(map[string]string)
+	data["key"] = ps.ByName("key")
+	data["domain"] = ps.ByName("domain")
 
-	renderTemplate(w, "view", view)
+	renderTemplate(w, "view", data)
 }
 
-func ResendHandler(w http.ResponseWriter, r *http.Request) {
+func HtmlHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	domain := ps.ByName("domain")
+	key := ps.ByName("key")
+	mg := mailgun.NewMailgun(domain, apiKey, "")
+	message, _ := mg.GetStoredMessage(key)
+
+	renderTemplate(w, "html", template.HTML(message.BodyHtml))
+}
+
+func PlainHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	domain := ps.ByName("domain")
+	key := ps.ByName("key")
+	mg := mailgun.NewMailgun(domain, apiKey, "")
+	message, _ := mg.GetStoredMessage(key)
+
+	renderTemplate(w, "plain", message.BodyPlain)
+}
+
+func ResendHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	domain := ps.ByName("domain")
+	mg := mailgun.NewMailgun(domain, apiKey, "")
 	r.ParseForm()
 	key := r.Form.Get("key")
 	to := r.Form.Get("to")
