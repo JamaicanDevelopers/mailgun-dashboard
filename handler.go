@@ -29,11 +29,6 @@ type Logs struct {
 	SelectedDomain string
 }
 
-type View struct {
-	Html template.HTML
-	Text string
-}
-
 func init() {
 	funcMap := template.FuncMap{
 		"ts_format": func(timestamp float64) string {
