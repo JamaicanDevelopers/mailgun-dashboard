@@ -41,12 +41,12 @@
       {{if eq $event.event "failed"}}
       <br><span>{{index $event "delivery-status" "message"}}</span>
       {{end}}
-      <span class="actions">
+      <div class="btn-group actions" role="group" aria-label="actions">
         <a class="show-body btn btn-info btn-xs" data-name="{{index $event.message.headers "message-id"}}" href="/view/{{$.SelectedDomain}}/{{$event.storage.key}}">View</a>
         <a class="resend-message btn btn-success btn-xs" data-to="{{$event.recipient}}" data-key="{{$event.storage.key}}" href="/resend/{{$.SelectedDomain}}">Resend</a>
         <a class="btn btn-default btn-xs" href="/?id={{index $event.message.headers "message-id"}}">History</a>
         <a class="btn btn-warning btn-xs" data-toggle="collapse" href="#{{$index}}-{{index $event.message.headers "message-id"|sanitize}}">Raw</a>
-      </span>
+      </div>
       <div class="collapse" id="{{$index}}-{{index $event.message.headers "message-id"|sanitize}}">
         <pre>{{$event|to_nice_json}}</pre>
       </div>
