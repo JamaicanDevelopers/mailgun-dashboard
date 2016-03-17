@@ -12,7 +12,7 @@ MAILGUN_DOMAIN=<domain> MAILGUN_APIKEY=<api key> ./mailgun-dashboard
 
 ## Screenshots
 
-![dashboard](http://i.imgur.com/8lb6l82.png)
+![dashboard](http://i.imgur.com/SNrd358.png)
 
 ![plain](http://i.imgur.com/fK365Vz.png)
 
