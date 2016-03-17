@@ -16,4 +16,12 @@ $('.resend-message').on('click', function(event) {
     $.post($(this).attr('href'), {key: $(this).data('key'), to: to}, function(data) {
         window.alert("Message resent.");
     });
-})
+});
+
+$(document).ready(function(event) {
+    $('iframe').css('height', window.innerHeight - 87);
+});
+
+$(window).on('resize', function(event) {
+    $('iframe').css('height', window.innerHeight - 87);
+});
