@@ -9,8 +9,12 @@
 
   <!-- Tab panes -->
   <div class="tab-content">
-    <div role="tabpanel" class="tab-pane active" id="html"><div id="html-body">{{.Html}}</div></div>
-    <div role="tabpanel" class="tab-pane" id="text"><div id="text-body">{{.Text}}</div></div>
+    <div role="tabpanel" class="tab-pane active" id="html">
+      <iframe src="/view/{{.domain}}/{{.key}}/html" frameborder="0" scrolling="auto" seamless="true" width="100%"></iframe>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="text">
+      <iframe src="/view/{{.domain}}/{{.key}}/plain" frameborder="0" scrolling="auto" seamless="true" width="100%"></iframe>
+    </div>
   </div>
 
 </div>
