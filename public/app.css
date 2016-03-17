@@ -49,13 +49,3 @@ body {
     top: 5px;
     right: 5px;
 }
-
-#html-body {
-    all: initial;
-}
-
-#text-body {
-    all: initial;
-    font-family: monospace;
-    white-space: pre;
-}
