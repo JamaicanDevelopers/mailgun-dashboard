@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"html/template"
@@ -44,6 +45,9 @@ func init() {
 			indented, _ := json.MarshalIndent(event, "", "    ")
 
 			return string(indented)
+		},
+		"base64": func(val string) string {
+			return base64.StdEncoding.EncodeToString([]byte(val))
 		},
 	}
 
@@ -101,26 +105,24 @@ func HomeHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
 func ViewHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	data := make(map[string]string)
-	data["key"] = ps.ByName("key")
+	data["url"] = ps.ByName("url")
 	data["domain"] = ps.ByName("domain")
 
 	renderTemplate(w, "view", data)
 }
 
 func HtmlHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	domain := ps.ByName("domain")
-	key := ps.ByName("key")
-	mg := mailgun.NewMailgun(domain, apiKey, "")
-	message, _ := mg.GetStoredMessage(key)
+	encodedUrl := ps.ByName("url")
+	url, _ := base64.StdEncoding.DecodeString(encodedUrl)
+	message := getStoredMessage(apiKey, string(url))
 
 	renderTemplate(w, "html", template.HTML(message.BodyHtml))
 }
 
 func PlainHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	domain := ps.ByName("domain")
-	key := ps.ByName("key")
-	mg := mailgun.NewMailgun(domain, apiKey, "")
-	message, _ := mg.GetStoredMessage(key)
+	encodedUrl := ps.ByName("url")
+	url, _ := base64.StdEncoding.DecodeString(encodedUrl)
+	message := getStoredMessage(apiKey, string(url))
 
 	renderTemplate(w, "plain", message.BodyPlain)
 }

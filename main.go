@@ -12,9 +12,9 @@ import (
 func main() {
 	router := httprouter.New()
 	router.GET("/", HomeHandler)
-	router.GET("/view/:domain/:key", ViewHandler)
-	router.GET("/view/:domain/:key/html", HtmlHandler)
-	router.GET("/view/:domain/:key/plain", PlainHandler)
+	router.GET("/view/:domain/:url", ViewHandler)
+	router.GET("/view/:domain/:url/html", HtmlHandler)
+	router.GET("/view/:domain/:url/plain", PlainHandler)
 	router.POST("/resend/:domain", ResendHandler)
 	router.ServeFiles("/public/*filepath", http.Dir("public"))
 
