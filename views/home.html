@@ -42,8 +42,12 @@
       <br><span>{{index $event "delivery-status" "message"}}</span>
       {{end}}
       <div class="btn-group actions" role="group" aria-label="actions">
+        {{if $event.storage.url}}
         <a class="show-body btn btn-info btn-xs" data-name="{{index $event.message.headers "message-id"}}" href="/view/{{$.SelectedDomain}}/{{$event.storage.url|base64}}">View</a>
+        {{end}}
+        {{if $event.storage.key}}
         <a class="resend-message btn btn-success btn-xs" data-to="{{$event.recipient}}" data-key="{{$event.storage.key}}" href="/resend/{{$.SelectedDomain}}">Resend</a>
+        {{end}}
         <a class="btn btn-default btn-xs" href="/?id={{index $event.message.headers "message-id"}}&amp;domain={{$.SelectedDomain}}">History</a>
         <a class="btn btn-warning btn-xs" data-toggle="collapse" href="#{{$index}}-{{index $event.message.headers "message-id"|sanitize}}">Raw</a>
       </div>
